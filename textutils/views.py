@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.shortcuts import render
 from django.http import HttpResponse
 
 
@@ -7,67 +8,54 @@ def index(request):
 
 
 def analyze(request):
-    djtext = request.GET.get('text', 'default')
-    removepunc = request.GET.get('removepunc', 'off')
-    fullcaps = request.GET.get('fullcaps', 'off')
-    newlineremove= request.GET.get('newlineremove','off')
-    extraspaceremove= request.GET.get('extraspaceremove',"off")
+    djtext = request.POST.get('text', '')
+
+    removepunc = request.POST.get('removepunc', 'off')
+    fullcaps = request.POST.get('fullcaps', 'off')
+    newlineremove = request.POST.get('newlineremove', 'off')
+    extraspaceremove = request.POST.get('extraspaceremove', 'off')
+
+    analyzed = djtext   # ✅ initialize once
 
     if removepunc == "on":
-        analyzed = ""
-        punctuations = "!()-[]{};:'\"\\<>?.,_"
-
-        for char in djtext:
+        punctuations = '''!()-[]{};:'"\,<>./?@#$%^&*_~'''
+        temp = ""
+        for char in analyzed:
             if char not in punctuations:
-                analyzed += char
+                temp += char
+        analyzed = temp
 
-        params = {
-            'purpose': 'Removed Punctuations',
-            'analyzed_text': analyzed
-        }
+    if fullcaps == "on":
+        temp = ""
+        for char in analyzed:
+            temp += char.upper()
+        analyzed = temp
 
-        return render(request, 'analyzed.html', params)
+    if newlineremove == "on":
+        temp = ""
+        for char in analyzed:
+            if char != "\n" and char != "\r":   # ✅ fixed
+                temp += char
+        analyzed = temp
 
-    elif fullcaps == "on":
-        analyzed = ""
-        for char in djtext:
-            analyzed += char.upper()
+    if extraspaceremove == "on":
+        temp = ""
+        for index, char in enumerate(analyzed):
+            if not (char == " " and index + 1 < len(analyzed) and analyzed[index + 1] == " "):
+                temp += char
+        analyzed = temp
 
-        params = {
-            'purpose': 'Change to UpperCase',
-            'analyzed_text': analyzed
-        }
+    # ✅ handle no checkbox selected
+    if not (removepunc == "on" or fullcaps == "on" or newlineremove == "on" or extraspaceremove == "on"):
+        return HttpResponse("Please select at least one operation")
 
-        return render(request, 'analyzed.html', params)
-    elif(newlineremove == "on"):
-        analyzed = ""
-        for char in djtext:
-            if char!="\n":
-             analyzed += char
+    params = {
+        'purpose': 'Text Analyzed',
+        'analyzed_text': analyzed
+    }
 
-        params = {
-            'purpose': 'Removed NewLines',
-            'analyzed_text': analyzed
-        }
-        return render(request, 'analyzed.html',params)
-    elif extraspaceremove == "on":
-        analyzed = ""
+    return render(request, 'analyzed.html', params)
 
-        for index, char in enumerate(djtext):
-            if index < len(djtext) - 1:
-                if not (djtext[index] == " " and djtext[index + 1] == " "):
-                    analyzed += char
-            else:
-                analyzed += char
-
-        params = {
-            'purpose': 'Removed Extra Spaces',
-            'analyzed_text': analyzed
-        }
-
-        return render(request, 'analyzed.html', params)
-    else:
-        return HttpResponse("Error")
 
 
 def capitalizefirst(request):

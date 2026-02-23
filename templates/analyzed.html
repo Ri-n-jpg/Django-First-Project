@@ -1,13 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    {% load static %}
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Analysis Result</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
+
 <body>
-<h1>Your Analyzed Text - {{purpose}}</h1>
-<p>
-    {{analyzed_text}}
-</p>
+<div class="container">
+    <h1>Analysis Result</h1>
+
+    <div class="result-box">
+        <h3>{{ purpose }}</h3>
+        <pre>{{ analyzed_text }}</pre>
+    </div>
+
+    <br>
+    <a href="/">
+        <button>Go Back</button>
+    </a>
+</div>
 </body>
 </html>

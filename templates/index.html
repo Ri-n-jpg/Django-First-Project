@@ -1,21 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    {% load static %}
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Text Analyzer</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
-<body>
-<h1>Welcome to my first django project</h1>
-<form action="analyze/" method="get">
 
-    <textarea name="text" style="width:721px; height:93px;"></textarea>
-    <br><br>
-    <input type="checkbox" name="removepunc">Remove Punctuations<br>
-    <input type="checkbox" name="fullcaps">UPPERCASE<br>
-    <input type="checkbox" name="newlineremove">New Line Remover<br>
-     <input type="checkbox" name="extraspaceremove">ExtraSpace Remover<br>
-    <button type="checkbox">Analyze Text</button>
-    <br><br>
-</form>
+<body>
+
+<div class="container">
+    <h1>Welcome to my first Django Project</h1>
+    <h2>Text Analyzer</h2>
+
+    <form action="{% url 'analyze' %}" method="post">  {%csrf_token %}
+        <textarea name="text" placeholder="Enter your text here..."></textarea>
+
+        <div class="options">
+            <label><input type="checkbox" name="removepunc"> Remove Punctuation</label>
+            <label><input type="checkbox" name="fullcaps"> Convert to Uppercase</label>
+            <label><input type="checkbox" name="newlineremove"> Remove New Line</label>
+            <label><input type="checkbox" name="extraspaceremove"> Remove Extra Space</label>
+        </div>
+
+        <button type="submit">Analyze</button>
+    </form>
+</div>
+
 </body>
 </html>
